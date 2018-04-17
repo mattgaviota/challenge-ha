@@ -1,4 +1,4 @@
-package challenge
+package main
 
 /*
 Package challenge find the 5 locations closests to the office
@@ -11,7 +11,9 @@ The CSV file must have a line structure like this
 where the first row is an Id and the others two are latitude and longitude
 respectively. The first line with header can be omitted.
 
-Usage: ./challenge <filename>
+The amount of locations can be changed with the amount argument. Default is 5.
+
+Usage: ./challenge <filename> [amount]
 */
 
 import (
@@ -76,13 +78,13 @@ func distanceToOffice(point *geo.Point) float64 {
 }
 
 // makeClosestList make a ordered list with the closests points to the Office.
-func makeClosestList(list []Location, location Location) []Location {
+func makeClosestList(list []Location, location Location, amount int) []Location {
 	index := sort.Search(
 		len(list),
 		func(i int) bool { return list[i].distance > location.distance },
 	)
-	if index < 5 {
-		if len(list) < 5 {
+	if index < amount {
+		if len(list) < amount {
 			list = append(list, Location{})
 		}
 		copy(list[index+1:], list[index:])
@@ -92,13 +94,13 @@ func makeClosestList(list []Location, location Location) []Location {
 }
 
 // makeFurthestList make a ordered list with the furthests points to the Office.
-func makeFurthestList(list []Location, location Location) []Location {
+func makeFurthestList(list []Location, location Location, amount int) []Location {
 	index := sort.Search(
 		len(list),
 		func(i int) bool { return list[i].distance < location.distance },
 	)
-	if index < 5 {
-		if len(list) < 5 {
+	if index < amount {
+		if len(list) < amount {
 			list = append(list, Location{})
 		}
 		copy(list[index+1:], list[index:])
@@ -109,15 +111,15 @@ func makeFurthestList(list []Location, location Location) []Location {
 
 // parseLocations open and read the CSV file and process every line to calculate
 // the 5 closests and furthests points to the Office.
-func parseLocations(filename string) ([]Location, []Location, error) {
+func parseLocations(filename string, amount int) ([]Location, []Location, error) {
 	csvFile, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer csvFile.Close()
 	reader := csv.NewReader(csvFile)
-	closests := make([]Location, 0, 5)
-	furthests := make([]Location, 0, 5)
+	closests := make([]Location, 0, amount)
+	furthests := make([]Location, 0, amount)
 	for {
 		line, err := reader.Read()
 		if err == io.EOF {
@@ -140,18 +142,25 @@ func parseLocations(filename string) ([]Location, []Location, error) {
 			distance,
 		}
 
-		closests = makeClosestList(closests, location)
-		furthests = makeFurthestList(furthests, location)
+		closests = makeClosestList(closests, location, amount)
+		furthests = makeFurthestList(furthests, location, amount)
 	}
 }
 
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Printf("Error: Source file name is required\n")
-		fmt.Println("Usage:", os.Args[0], "<filename> \n")
+		fmt.Println("Usage:", os.Args[0], "<filename> [amount]\n")
 		return
 	}
-	closests, furthests, err := parseLocations(os.Args[1])
+	amount := 5
+	if len(os.Args) > 2 {
+		var err error
+		if amount, err = strconv.Atoi(os.Args[2]); err != nil {
+			amount = 5
+		}
+	}
+	closests, furthests, err := parseLocations(os.Args[1], amount)
 	if err != nil {
 		log.Fatal(err)
 	}

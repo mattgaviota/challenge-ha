@@ -13,6 +13,8 @@ The CSV file must have a line structure like this
 where the first row is an Id and the others two are latitude and longitude
 respectively. The first line with header can be omitted.
 
+The amount of locations can be changed with the amount argument. Default is 5.
+
 ## Requirements
 
 In order to try the package you need golang(https://golang.org/doc/install) and
@@ -28,4 +30,4 @@ You need install the package first. First download or clone the folder and next
 
     cd challenge-ha/challenge && go install .
     cd $GOPATH/bin
-    ./challenge <PATHTOPACKAGE>/challenge-ha/files/geoData.csv
+    ./challenge <PATHTOPACKAGE>/challenge-ha/files/geoData.csv [AMOUNT]
