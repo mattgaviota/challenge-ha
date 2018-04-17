@@ -43,7 +43,8 @@ func parseId(csvId string) int64 {
 	if id, err = strconv.ParseInt(csvId, 10, 0); err != nil {
 		e := err.(*strconv.NumError)
 		if e.Err != strconv.ErrSyntax {
-			log.Fatal(e.Err)
+			log.Print(e.Err)
+			return -2
 		} else {
 			return -1
 		}
@@ -59,17 +60,22 @@ func makePointFromCsv(csvLat, csvLng string) *geo.Point {
 	if lat, err = strconv.ParseFloat(csvLat, 64); err != nil {
 		e := err.(*strconv.NumError)
 		if e.Err != strconv.ErrSyntax {
-			log.Fatal(e.Err)
+			log.Print(e.Err)
+			return geo.NewPoint(-2, -2)
+		} else {
+			return geo.NewPoint(-1, -1)
 		}
 	}
 	if lng, err = strconv.ParseFloat(csvLng, 64); err != nil {
 		e := err.(*strconv.NumError)
 		if e.Err != strconv.ErrSyntax {
-			log.Fatal(e.Err)
+			log.Print(e.Err)
+			return geo.NewPoint(-2, -2)
+		} else {
+			return geo.NewPoint(-1, -1)
 		}
 	}
-	point := geo.NewPoint(lat, lng)
-	return point
+	return geo.NewPoint(lat, lng)
 }
 
 // distanceToOffice calculate the distance, in kilometers from the *point* to the Office.
@@ -150,7 +156,7 @@ func parseLocations(filename string, amount int) ([]Location, []Location, error)
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Printf("Error: Source file name is required\n")
-		fmt.Println("Usage:", os.Args[0], "<filename> [amount]\n")
+		fmt.Println("Usage:", os.Args[0], "<filename> [amount]")
 		return
 	}
 	amount := 5
