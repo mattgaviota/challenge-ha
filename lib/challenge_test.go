@@ -1,9 +1,9 @@
-package main
+package lib
 
 import (
 	"testing"
 
-	geo "github.com/kellydunn/golang-geo"
+	"github.com/kellydunn/golang-geo"
 )
 
 func TestParseId(t *testing.T) {
@@ -17,7 +17,7 @@ func TestParseId(t *testing.T) {
 		{"8917237612736871236712637123", -2},
 	}
 	for _, c := range cases {
-		got := parseId(c.in)
+		got := ParseId(c.in)
 		if got != c.want {
 			t.Errorf("parseId(%#v) == %#v, want %#v", c.in, got, c.want)
 		}
@@ -40,7 +40,7 @@ func TestMakePointFromCsv(t *testing.T) {
 		{"27.431414", "16384e1024", point3},
 	}
 	for _, c := range cases {
-		got := makePointFromCsv(c.in1, c.in2)
+		got := MakePointFromCsv(c.in1, c.in2)
 		if *got != *c.want {
 			t.Errorf("makePointFromCsv(%q, %q) == %#v, want %#v", c.in1, c.in2, got, c.want)
 		}
@@ -56,7 +56,7 @@ func TestDistanceToOffice(t *testing.T) {
 		{point, 1758.0806131200134},
 	}
 	for _, c := range cases {
-		got := distanceToOffice(c.in)
+		got := DistanceToOffice(c.in)
 		if got != c.want {
 			t.Errorf("distanceToOffice(%#v) == %#v, want %#v", c.in, got, c.want)
 		}
