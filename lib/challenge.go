@@ -32,7 +32,7 @@ func ParseId(csvId string) int64 {
 	return id
 }
 
-// makePointFromCsv parse latitude and longitude from the rows in the CSV file
+// MakePointFromCsv parse latitude and longitude from the rows in the CSV file
 // and make a point from the library geo.
 func MakePointFromCsv(csvLat, csvLng string) *geo.Point {
 	var lat, lng float64
@@ -58,12 +58,12 @@ func MakePointFromCsv(csvLat, csvLng string) *geo.Point {
 	return geo.NewPoint(lat, lng)
 }
 
-// distanceToOffice calculate the distance, in kilometers from the *point* to the Office.
+// DistanceToOffice calculate the distance, in kilometers from the *point* to the Office.
 func DistanceToOffice(point *geo.Point) float64 {
 	return point.GreatCircleDistance(Office)
 }
 
-// makeClosestList make a ordered list with the closests points to the Office.
+// MakeClosestList make a ordered list with the closests points to the Office.
 func MakeClosestList(list []Location, location Location, amount int) []Location {
 	index := sort.Search(
 		len(list),
@@ -79,7 +79,7 @@ func MakeClosestList(list []Location, location Location, amount int) []Location 
 	return list
 }
 
-// makeFurthestList make a ordered list with the furthests points to the Office.
+// MakeFurthestList make a ordered list with the furthests points to the Office.
 func MakeFurthestList(list []Location, location Location, amount int) []Location {
 	index := sort.Search(
 		len(list),

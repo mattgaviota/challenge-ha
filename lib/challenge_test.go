@@ -19,7 +19,7 @@ func TestParseId(t *testing.T) {
 	for _, c := range cases {
 		got := ParseId(c.in)
 		if got != c.want {
-			t.Errorf("parseId(%#v) == %#v, want %#v", c.in, got, c.want)
+			t.Errorf("ParseId(%#v) == %#v, want %#v", c.in, got, c.want)
 		}
 	}
 }
@@ -42,7 +42,7 @@ func TestMakePointFromCsv(t *testing.T) {
 	for _, c := range cases {
 		got := MakePointFromCsv(c.in1, c.in2)
 		if *got != *c.want {
-			t.Errorf("makePointFromCsv(%q, %q) == %#v, want %#v", c.in1, c.in2, got, c.want)
+			t.Errorf("MakePointFromCsv(%q, %q) == %#v, want %#v", c.in1, c.in2, got, c.want)
 		}
 	}
 }
@@ -58,7 +58,93 @@ func TestDistanceToOffice(t *testing.T) {
 	for _, c := range cases {
 		got := DistanceToOffice(c.in)
 		if got != c.want {
-			t.Errorf("distanceToOffice(%#v) == %#v, want %#v", c.in, got, c.want)
+			t.Errorf("DistanceToOffice(%#v) == %#v, want %#v", c.in, got, c.want)
+		}
+	}
+}
+
+func testEq(a, b []Location) bool {
+	if &a == &b {
+		return true
+	}
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i].Id != b[i].Id {
+			return false
+		}
+		if a[i].Distance != b[i].Distance {
+			return false
+		}
+	}
+	return true
+}
+
+func TestMakeClosestList(t *testing.T) {
+	location1 := Location{3212, 0.53123}
+	location2 := Location{8976, 0.74567}
+	location3 := Location{2456, 0.85421}
+	emptyList := []Location{}
+	oneElementList := []Location{
+		location1,
+	}
+	twoElementList := []Location{
+		location1,
+		location3,
+	}
+	threeElementList := []Location{
+		location1,
+		location2,
+		location3,
+	}
+	amount := 3
+	cases := []struct {
+		inList     []Location
+		inLocation Location
+		want       []Location
+	}{
+		{emptyList, location1, oneElementList},
+		{twoElementList, location2, threeElementList},
+	}
+	for _, c := range cases {
+		got := MakeClosestList(c.inList, c.inLocation, amount)
+		if !testEq(got, c.want) {
+			t.Errorf("MakeClosestList(%#v, %#v, %#v) == %#v, want %#v", c.inList, c.inLocation, amount, got, c.want)
+		}
+	}
+}
+
+func TestMakeFurthestList(t *testing.T) {
+	location1 := Location{2456, 0.85421}
+	location2 := Location{8976, 0.74567}
+	location3 := Location{3212, 0.53123}
+	emptyList := []Location{}
+	oneElementList := []Location{
+		location1,
+	}
+	twoElementList := []Location{
+		location1,
+		location3,
+	}
+	threeElementList := []Location{
+		location1,
+		location2,
+		location3,
+	}
+	amount := 3
+	cases := []struct {
+		inList     []Location
+		inLocation Location
+		want       []Location
+	}{
+		{emptyList, location1, oneElementList},
+		{twoElementList, location2, threeElementList},
+	}
+	for _, c := range cases {
+		got := MakeFurthestList(c.inList, c.inLocation, amount)
+		if !testEq(got, c.want) {
+			t.Errorf("MakeFurthestList(%#v, %#v, %#v) == %#v, want %#v", c.inList, c.inLocation, amount, got, c.want)
 		}
 	}
 }
