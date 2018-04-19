@@ -22,10 +22,11 @@ import (
 
 // ParseLocations open and read the CSV file and process every line to calculate
 // the 5 closests and furthests points to the Office.
-func ParseLocations(filename string, amount int) ([]Location, []Location, error) {
+func ParseLocations(filename string, amount int) ([]Location, []Location, int) {
 	csvFile, err := os.Open(filename)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return nil, nil, -1 // Error open the file
 	}
 	defer csvFile.Close()
 	reader := csv.NewReader(csvFile)
@@ -34,9 +35,10 @@ func ParseLocations(filename string, amount int) ([]Location, []Location, error)
 	for {
 		line, err := reader.Read()
 		if err == io.EOF {
-			return closests, furthests, nil
+			return closests, furthests, 0 // No error
 		} else if err != nil {
-			log.Fatal(err)
+			log.Print(err)
+			return nil, nil, -2 // Error reading the buffer
 		}
 		// Parse the id
 		id := ParseId(line[0])

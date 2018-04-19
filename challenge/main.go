@@ -14,7 +14,6 @@ or
 import (
 	"challenge-ha/lib"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 )
@@ -33,15 +32,23 @@ func main() {
 		}
 	}
 	closests, furthests, err := lib.ParseLocations(os.Args[1], amount)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Closests")
-	for _, points := range closests {
-		fmt.Printf("ID: %d - Distance: %.2f Kms.\n", points.Id, points.Distance)
-	}
-	fmt.Println("Furthests")
-	for _, points := range furthests {
-		fmt.Printf("ID: %d - Distance: %.2f Kms.\n", points.Id, points.Distance)
+	if err != 0 {
+		switch err {
+		case -1:
+			fmt.Println("The file doesn't exist")
+		case -2:
+			fmt.Println("The CSV file has a line with the wrong number of fields")
+		default:
+			fmt.Println(err)
+		}
+	} else {
+		fmt.Println("Closests")
+		for _, points := range closests {
+			fmt.Printf("ID: %d - Distance: %.2f Kms.\n", points.Id, points.Distance)
+		}
+		fmt.Println("Furthests")
+		for _, points := range furthests {
+			fmt.Printf("ID: %d - Distance: %.2f Kms.\n", points.Id, points.Distance)
+		}
 	}
 }
