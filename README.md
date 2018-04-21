@@ -15,6 +15,9 @@ respectively. The first line with header can be omitted.
 
 The amount of locations can be changed with the amount argument. Default is 5.
 
+Also you can use a table from a postgres database with the same structure of the
+CSV file.
+
 ## Requirements
 
 In order to try the app you need [golang](https://golang.org/doc/install),
