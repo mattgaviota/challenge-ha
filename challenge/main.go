@@ -6,41 +6,31 @@ CSV file or a table from a DB.
 
 Usage:
 
-	./challenge -f <filename> [amount]
-or
-	./challenge -d -h localhost -u user -p password -t table amount
+usage: Challenge [-h|--help] [-f|--filename "<value>"] [-d|--datasource
+                 "<value>"] [-a|--amount <integer>]
+
+                 Challenge program
+
+Arguments:
+
+  -h  --help        Print help information
+  -f  --filename    filename of the CSV(Ex. path/to/file.csv)
+  -d  --datasource  datasource of the table(Ex.
+                    'postgres://user:pass@host/database')
+  -a  --amount      Amount of locations included in the lists. Default: 5
 */
 
 import (
 	"challenge-ha/lib"
 	"fmt"
 	"os"
-	"strconv"
+
+	"github.com/akamensky/argparse"
 )
 
-func main() {
-	if len(os.Args) < 2 {
-		fmt.Printf("Error: Source file name is required. Amount locations is optional\n")
-		fmt.Println("Usage:", os.Args[0], "<filename> [amount]")
-		return
-	}
-	amount := 5
-	if len(os.Args) > 2 {
-		var err error
-		if amount, err = strconv.Atoi(os.Args[2]); err != nil {
-			amount = 5
-		}
-	}
-	closests, furthests, err := lib.ParseLocations(os.Args[1], amount)
+func showResult(closests []lib.Location, furthests []lib.Location, err int) {
 	if err != 0 {
-		switch err {
-		case -1:
-			fmt.Println("The file doesn't exist")
-		case -2:
-			fmt.Println("The CSV file has a line with the wrong number of fields")
-		default:
-			fmt.Println(err)
-		}
+		lib.ShowError(err)
 	} else {
 		fmt.Println("Closests")
 		for _, points := range closests {
@@ -51,4 +41,34 @@ func main() {
 			fmt.Printf("ID: %d - Distance: %.2f Kms.\n", points.Id, points.Distance)
 		}
 	}
+	os.Exit(0)
+}
+
+func main() {
+	parser := argparse.NewParser("Challenge", "Challenge cli")
+
+	// Optional shorthand argument
+	filename := parser.String("f", "filename", &argparse.Options{Required: false, Help: "filename of the CSV(Ex. path/to/file.csv)"})
+	// Optional shorthand argument
+	datasource := parser.String("d", "datasource", &argparse.Options{Required: false, Help: "datasource of the table(Ex. 'postgres://user:pass@host/database')"})
+	// Optional shorthand argument
+	amount := parser.Int("a", "amount", &argparse.Options{Required: false, Default: 5, Help: "Amount of locations included in the lists"})
+	// Parse args
+	err := parser.Parse(os.Args)
+	if err != nil {
+		fmt.Print(parser.Usage(err))
+		os.Exit(1)
+	}
+	if *filename != "" {
+		fmt.Println("Results calculated from CSV File")
+		closests, furthests, err := lib.ParseLocations(*filename, *amount)
+		showResult(closests, furthests, err)
+	}
+	if *datasource != "" {
+		fmt.Println("Results calculated from database table")
+		closests, furthests, err := lib.QueryLocations(*datasource, *amount)
+		showResult(closests, furthests, err)
+	}
+	fmt.Print(parser.Usage(err))
+	os.Exit(1)
 }

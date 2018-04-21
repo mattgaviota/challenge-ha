@@ -27,8 +27,8 @@ func Test(t *testing.T) {
 		wantError        int
 	}{
 		{filename, amount, closestList, furthestList, 0}, // All ok
-		{nonExistFilename, amount, nil, nil, -1},         // File doesn't exist
-		{wrongFilename, amount, nil, nil, -2},            // Malformed CSV
+		{nonExistFilename, amount, nil, nil, 101},        // File doesn't exist
+		{wrongFilename, amount, nil, nil, 102},           // Malformed CSV
 	}
 	for _, c := range cases {
 		gotClosestList, gotFurthestList, gotErr := ParseLocations(c.inFilename, c.inAmount)

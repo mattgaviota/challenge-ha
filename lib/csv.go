@@ -26,7 +26,7 @@ func ParseLocations(filename string, amount int) ([]Location, []Location, int) {
 	csvFile, err := os.Open(filename)
 	if err != nil {
 		log.Print(err)
-		return nil, nil, -1 // Error open the file
+		return nil, nil, 101 // Error open the file
 	}
 	defer csvFile.Close()
 	reader := csv.NewReader(csvFile)
@@ -38,7 +38,7 @@ func ParseLocations(filename string, amount int) ([]Location, []Location, int) {
 			return closests, furthests, 0 // No error
 		} else if err != nil {
 			log.Print(err)
-			return nil, nil, -2 // Error reading the buffer
+			return nil, nil, 102 // Error reading the buffer
 		}
 		// Parse the id
 		id := ParseId(line[0])
