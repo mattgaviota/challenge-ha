@@ -5,6 +5,9 @@ services:
     image: postgres
     ports:
       - "5432:5432"
+    volumes:
+      - ./testdata:/var/lib/postgresql/testdata
+      - ./database:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_USER: admin

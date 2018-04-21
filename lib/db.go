@@ -2,19 +2,20 @@ package lib
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/lib/pq"
 )
 
-func QueryLocations(dataSource string, amount int) ([]Location, []Location, int) {
-	db, err := sql.Open("postgres", dataSource)
+func QueryLocations(driver, dataSource, table string, amount int) ([]Location, []Location, int) {
+	db, err := sql.Open(driver, dataSource)
 	if err != nil {
 		log.Print(err)
 		return nil, nil, 201 // Error
 	}
 
-	rows, err := db.Query("SELECT * FROM locations")
+	rows, err := db.Query(fmt.Sprintf("SELECT * FROM %s", table))
 	if err != nil {
 		log.Print(err)
 		return nil, nil, 202 // Error

@@ -47,11 +47,13 @@ func showResult(closests []lib.Location, furthests []lib.Location, err int) {
 func main() {
 	parser := argparse.NewParser("Challenge", "Challenge cli")
 
-	// Optional shorthand argument
+	// Optional filename CSV argument
 	filename := parser.String("f", "filename", &argparse.Options{Required: false, Help: "filename of the CSV(Ex. path/to/file.csv)"})
-	// Optional shorthand argument
-	datasource := parser.String("d", "datasource", &argparse.Options{Required: false, Help: "datasource of the table(Ex. 'postgres://user:pass@host/database')"})
-	// Optional shorthand argument
+	// Optional data source DB argument
+	driver := parser.String("d", "driver", &argparse.Options{Required: false, Default: "postgres", Help: "driver of the database(Ex. 'postgres')"})
+	datasource := parser.String("s", "datasource", &argparse.Options{Required: false, Help: "datasource of the database(Ex. 'postgres://user:pass@host/database')"})
+	table := parser.String("t", "table", &argparse.Options{Required: false, Default: "locations", Help: "table where the id, lat and lng are stored(Ex. 'locations')"})
+	// Optional amount argument
 	amount := parser.Int("a", "amount", &argparse.Options{Required: false, Default: 5, Help: "Amount of locations included in the lists"})
 	// Parse args
 	err := parser.Parse(os.Args)
@@ -66,7 +68,7 @@ func main() {
 	}
 	if *datasource != "" {
 		fmt.Println("Results calculated from database table")
-		closests, furthests, err := lib.QueryLocations(*datasource, *amount)
+		closests, furthests, err := lib.QueryLocations(*driver, *datasource, *table, *amount)
 		showResult(closests, furthests, err)
 	}
 	fmt.Print(parser.Usage(err))

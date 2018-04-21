@@ -7,4 +7,4 @@ CREATE TABLE locations(
   lng FLOAT
 );
 
-\copy locations(id, lat, lng) FROM './files/geoData.csv' DELIMITER ',' CSV HEADER;
+\copy locations(id, lat, lng) FROM '/var/lib/postgresql/testdata/geoDataLarge.csv' DELIMITER ',' CSV HEADER;
